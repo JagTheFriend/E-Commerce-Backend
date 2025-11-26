@@ -33,7 +33,8 @@ func (a *application) mount() http.Handler {
 	// Time out requests after 30 seconds, preventing further processing of the request
 	r.Use(middleware.Timeout(30 * time.Second))
 
-	productsHandler := products.NewHandler(nil)
+	productsService := products.NewService()
+	productsHandler := products.NewHandler(productsService)
 	r.Route("/products", func(r chi.Router) {
 		r.Get("/", productsHandler.ListProducts)
 	})

@@ -1,6 +1,7 @@
 package products
 
 import (
+	"log/slog"
 	"net/http"
 
 	"github.com/JagTheFriend/ecommerce/internal/json"
@@ -17,6 +18,11 @@ func NewHandler(service Service) *handler {
 }
 
 func (h *handler) ListProducts(w http.ResponseWriter, r *http.Request) {
-	products := []string{"Product 1", "Product 2", "Product 3"}
-	json.Write(w, 200, products)
+	err := h.service.ListProducts(r.Context())
+	if err != nil {
+		slog.Error("Failed to list products", "error", err)
+		json.Write(w, http.StatusInternalServerError, "Internal Server Error")
+		return
+	}
+	json.Write(w, 200, "hi")
 }
