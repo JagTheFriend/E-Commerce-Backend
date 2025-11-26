@@ -16,7 +16,7 @@ type config struct {
 }
 
 type dbConfig struct {
-	dbUrl string
+	dsn string
 }
 
 type application struct {
