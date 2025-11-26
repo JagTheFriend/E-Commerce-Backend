@@ -42,6 +42,7 @@ func main() {
 
 	api := application{
 		config: config,
+		db:     conn,
 	}
 
 	if err := api.Start(api.mount()); err != nil {

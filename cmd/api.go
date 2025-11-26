@@ -5,9 +5,11 @@ import (
 	"net/http"
 	"time"
 
+	repo "github.com/JagTheFriend/ecommerce/internal/adapters/postgresql/sqlc"
 	"github.com/JagTheFriend/ecommerce/internal/products"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/jackc/pgx/v5"
 )
 
 type config struct {
@@ -21,6 +23,7 @@ type dbConfig struct {
 
 type application struct {
 	config config
+	db     *pgx.Conn
 }
 
 func (a *application) mount() http.Handler {
@@ -33,7 +36,7 @@ func (a *application) mount() http.Handler {
 	// Time out requests after 30 seconds, preventing further processing of the request
 	r.Use(middleware.Timeout(30 * time.Second))
 
-	productsService := products.NewService()
+	productsService := products.NewService(repo.New(a.db))
 	productsHandler := products.NewHandler(productsService)
 	r.Route("/products", func(r chi.Router) {
 		r.Get("/", productsHandler.ListProducts)
