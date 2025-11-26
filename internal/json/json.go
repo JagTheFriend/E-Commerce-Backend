@@ -12,3 +12,9 @@ func Write(w http.ResponseWriter, status int, data any) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
+
+func Read(r *http.Request, data any) error {
+	decoder := json.NewDecoder(r.Body)
+	decoder.DisallowUnknownFields()
+	return decoder.Decode(data)
+}
