@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/JagTheFriend/ecommerce/internal/products"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 )
@@ -31,6 +32,12 @@ func (a *application) mount() http.Handler {
 
 	// Time out requests after 30 seconds, preventing further processing of the request
 	r.Use(middleware.Timeout(30 * time.Second))
+
+	productsHandler := products.NewHandler(nil)
+	r.Route("/products", func(r chi.Router) {
+		r.Get("/", productsHandler.ListProducts)
+	})
+
 	return r
 }
 
