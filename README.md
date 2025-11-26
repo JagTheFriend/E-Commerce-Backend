@@ -36,6 +36,8 @@ GOOSE_MIGRATION_DIR="./internal/adapters/postgresql/migrations"
 
 ## Usage
 
+Start the server using [`air`](https://github.com/air-verse/air)
+
 ### API Endpoints
 
 #### List Products
