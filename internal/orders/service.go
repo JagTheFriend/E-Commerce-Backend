@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 
 	repo "github.com/JagTheFriend/ecommerce/internal/adapters/postgresql/sqlc"
 	"github.com/jackc/pgx/v5"
@@ -39,7 +40,11 @@ func (s *svc) PlaceOrder(ctx context.Context, tempOrder createOrderParams) (repo
 	if err != nil {
 		return repo.Order{}, err
 	}
-	defer tx.Rollback(ctx)
+	defer func() {
+		if err := tx.Rollback(ctx); err != nil {
+			log.Fatal("Failed to rollback transaction", "error", err)
+		}
+	}()
 
 	qtx := s.repo.WithTx(tx)
 
@@ -74,7 +79,10 @@ func (s *svc) PlaceOrder(ctx context.Context, tempOrder createOrderParams) (repo
 		// Challenge: Update the product stock quantity
 	}
 
-	tx.Commit(ctx)
+	err = tx.Commit(ctx)
+	if err != nil {
+		return repo.Order{}, err
+	}
 
 	return order, nil
 }

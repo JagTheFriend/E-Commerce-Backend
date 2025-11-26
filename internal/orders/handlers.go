@@ -1,7 +1,7 @@
 package orders
 
 import (
-	"log"
+	"log/slog"
 	"net/http"
 
 	"github.com/JagTheFriend/ecommerce/internal/json"
@@ -20,14 +20,14 @@ func NewHandler(service Service) *handler {
 func (h *handler) PlaceOrder(w http.ResponseWriter, r *http.Request) {
 	var tempOrder createOrderParams
 	if err := json.Read(r, &tempOrder); err != nil {
-		log.Println(err)
+		slog.Error("Error while reading request body", "error", err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	createdOrder, err := h.service.PlaceOrder(r.Context(), tempOrder)
 	if err != nil {
-		log.Println(err)
+		slog.Error("Error while placing order", "error", err)
 
 		if err == ErrProductNotFound {
 			http.Error(w, err.Error(), http.StatusNotFound)
